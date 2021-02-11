@@ -17,6 +17,10 @@ bool gameIsRunning = true;
 ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
 
+float player1_x = 0;
+float player1_rotate = 0;
+float player2_x = 0;
+
 void Initialize() {
     SDL_Init(SDL_INIT_VIDEO);
     displayWindow = SDL_CreateWindow("Triangle!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
@@ -53,7 +57,21 @@ void ProcessInput() {
     }
 }
 
-void Update() { }
+float lastTicks = 0.0f;
+
+void Update() {
+    float ticks = (float)SDL_GetTicks() / 1000.0f;
+    float deltaTime = ticks - lastTicks;
+    lastTicks = ticks;
+
+    player1_x += 1.0f * deltaTime;
+    player1_rotate += 90.0f * deltaTime;
+
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, glm::vec3(player1_x, 0.0f, 0.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(player1_rotate), glm::vec3(0.0f, 0.0f, 1.0f));
+
+}
 
 void Render() {
     glClear(GL_COLOR_BUFFER_BIT);
