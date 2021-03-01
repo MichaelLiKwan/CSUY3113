@@ -1,0 +1,5 @@
+﻿  main.cpp
+C:\Users\immic\Desktop\Github\CSUY3113\Proj2\VisualStudioSDLProject\SDLProject\main.cpp(201,89): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\immic\Desktop\Github\CSUY3113\Proj2\VisualStudioSDLProject\SDLProject\main.cpp(202,92): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\immic\Desktop\Github\CSUY3113\Proj2\VisualStudioSDLProject\SDLProject\main.cpp(203,92): warning C4305: 'initializing': truncation from 'double' to 'float'
+  SDLProject.vcxproj -> C:\Users\immic\Desktop\Github\CSUY3113\Proj2\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe
