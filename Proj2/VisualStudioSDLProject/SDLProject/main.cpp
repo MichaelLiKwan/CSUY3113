@@ -17,6 +17,8 @@
 SDL_Window* displayWindow;
 bool gameIsRunning = true;
 
+bool gameOver = false;
+
 ShaderProgram program;
 glm::mat4 viewMatrix, projectionMatrix, player1Matrix, player2Matrix, ballMatrix;
 
@@ -31,9 +33,9 @@ glm::vec3 player2_movement = glm::vec3(0, 0, 0);
 float player2_speed = 2.0f;
 
 glm::vec3 ball_position = glm::vec3(0, 0, 0);
-glm::vec3 ball_movement = glm::vec3(-1.0, 0.1, 0);
+glm::vec3 ball_movement = glm::vec3(1.0, 1.0, 0);
 
-float ball_speed = 1.0f;
+float ball_speed = 2.0f;
 
 //GLuint playerTextureID;
 //GLuint sunTextureID;
@@ -127,52 +129,56 @@ void ProcessInput() {
         }
     }
 
-    const Uint8* keys = SDL_GetKeyboardState(NULL);
+    if (gameOver == false) {
 
-    if (keys[SDL_SCANCODE_S]) {
-        if (player1_position.y > -2.75) {
-            player1_movement.y = -1.0f;
+        const Uint8* keys = SDL_GetKeyboardState(NULL);
+
+        if (keys[SDL_SCANCODE_S]) {
+            if (player1_position.y > -2.75) {
+                player1_movement.y = -1.0f;
+            }
         }
-    }
-    else if (keys[SDL_SCANCODE_W]) {
-        if (player1_position.y < 2.75) {
-            player1_movement.y = 1.0f;
+        else if (keys[SDL_SCANCODE_W]) {
+            if (player1_position.y < 2.75) {
+                player1_movement.y = 1.0f;
+            }
         }
-    }
 
-    if (keys[SDL_SCANCODE_DOWN]) {
-        if (player2_position.y > -2.75) {
-            player2_movement.y = -1.0f;
+        if (keys[SDL_SCANCODE_DOWN]) {
+            if (player2_position.y > -2.75) {
+                player2_movement.y = -1.0f;
+            }
         }
-    }
-    else if (keys[SDL_SCANCODE_UP]) {
-        if (player2_position.y < 2.75) {
-            player2_movement.y = 1.0f;
+        else if (keys[SDL_SCANCODE_UP]) {
+            if (player2_position.y < 2.75) {
+                player2_movement.y = 1.0f;
+            }
         }
-    }
 
-    if (glm::length(player1_movement) > 1.0f) {
-        player1_movement = glm::normalize(player1_movement);
-    }
+        if (glm::length(player1_movement) > 1.0f) {
+            player1_movement = glm::normalize(player1_movement);
+        }
 
-    if (glm::length(player2_movement) > 1.0f) {
-        player2_movement = glm::normalize(player2_movement);
-    }
+        if (glm::length(player2_movement) > 1.0f) {
+            player2_movement = glm::normalize(player2_movement);
+        }
 
-    if (ball_position.y > 3.65 || ball_position.y < -3.65) {
-        ball_movement.y = -1 * ball_movement.y;
-    }
+        if (ball_position.y > 3.65 || ball_position.y < -3.65) {
+            ball_movement.y = -1 * ball_movement.y;
+        }
 
-    if (ball_position.x > 4.9 || ball_position.x < -4.9) {
-        gameIsRunning = false;
-    }
-    
-    if ((ball_position.x < -4.7) && ((player1_position.y + 1) > ball_position.y) && (ball_position.y > (player1_position.y - 1))) {
-        ball_movement.x = -1 * ball_movement.x;
-    }
+        if (ball_position.x > 4.9 || ball_position.x < -4.9) {
+            ball_movement = glm::vec3(0);
+            gameOver = true;
+        }
 
-    if ((ball_position.x > 4.7) && ((player2_position.y + 1) > ball_position.y) && (ball_position.y > (player2_position.y - 1))) {
-        ball_movement.x = -1 * ball_movement.x;
+        if ((ball_position.x < -4.7) && ((player1_position.y + 1) > ball_position.y) && (ball_position.y > (player1_position.y - 1))) {
+            ball_movement.x = -1 * ball_movement.x;
+        }
+
+        if ((ball_position.x > 4.7) && ((player2_position.y + 1) > ball_position.y) && (ball_position.y > (player2_position.y - 1))) {
+            ball_movement.x = -1 * ball_movement.x;
+        }
     }
 }
 
