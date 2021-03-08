@@ -163,8 +163,12 @@ void ProcessInput() {
             player2_movement = glm::normalize(player2_movement);
         }
 
-        if (ball_position.y > 3.65 || ball_position.y < -3.65) {
-            ball_movement.y = -1 * ball_movement.y;
+        if (ball_position.y > 3.65) {
+            ball_movement.y = -1 * fabs(ball_movement.y);
+        }
+
+        if (ball_position.y < -3.65) {
+            ball_movement.y = fabs(ball_movement.y);
         }
 
         if (ball_position.x > 4.9 || ball_position.x < -4.9) {
@@ -173,11 +177,11 @@ void ProcessInput() {
         }
 
         if ((ball_position.x < -4.7) && ((player1_position.y + 1) > ball_position.y) && (ball_position.y > (player1_position.y - 1))) {
-            ball_movement.x = -1 * ball_movement.x;
+            ball_movement.x = fabs(ball_movement.x);
         }
 
         if ((ball_position.x > 4.7) && ((player2_position.y + 1) > ball_position.y) && (ball_position.y > (player2_position.y - 1))) {
-            ball_movement.x = -1 * ball_movement.x;
+            ball_movement.x = -1 * fabs(ball_movement.x);
         }
     }
 }

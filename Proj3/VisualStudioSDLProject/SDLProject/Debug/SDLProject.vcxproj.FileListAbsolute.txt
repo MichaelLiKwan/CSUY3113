@@ -1,0 +1,10 @@
+C:\Users\immic\Desktop\CS3113-master\Templates\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe
+C:\Users\immic\Desktop\CS3113-master\Templates\VisualStudioSDLProject\SDLProject\Debug\SDLProject.pdb
+C:\Users\immic\Desktop\Github\CSUY3113\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe
+C:\Users\immic\Desktop\Github\CSUY3113\VisualStudioSDLProject\SDLProject\Debug\SDLProject.pdb
+C:\Users\immic\Desktop\Github\CSUY3113\Proj1\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe
+C:\Users\immic\Desktop\Github\CSUY3113\Proj1\VisualStudioSDLProject\SDLProject\Debug\SDLProject.pdb
+C:\Users\immic\Desktop\Github\CSUY3113\Proj2\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe
+C:\Users\immic\Desktop\Github\CSUY3113\Proj2\VisualStudioSDLProject\SDLProject\Debug\SDLProject.pdb
+C:\Users\immic\Desktop\Github\CSUY3113\Proj3\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe
+C:\Users\immic\Desktop\Github\CSUY3113\Proj3\VisualStudioSDLProject\SDLProject\Debug\SDLProject.pdb
