@@ -16,8 +16,13 @@
 
 #include "Entity.h"
 
+#define PLATFORM_COUNT 5
+
+#include <vector>
+
 struct GameState {
     Entity* player;
+    Entity* platforms;
 };
 
 GameState state;
@@ -27,6 +32,8 @@ bool gameIsRunning = true;
 
 ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
+
+GLuint fontTextureID;
 
 GLuint LoadTexture(const char* filePath) {
     int w, h, n;
@@ -47,6 +54,59 @@ GLuint LoadTexture(const char* filePath) {
 
     stbi_image_free(image);
     return textureID;
+}
+
+void DrawText(ShaderProgram* program, GLuint fontTextureID, std::string text,
+    float size, float spacing, glm::vec3 position)
+{
+    float width = 1.0f / 16.0f;
+    float height = 1.0f / 16.0f;
+
+    std::vector<float> vertices;
+    std::vector<float> texCoords;
+
+    for (int i = 0; i < text.size(); i++) {
+
+        int index = (int)text[i];
+        float offset = (size + spacing) * i;
+        float u = (float)(index % 16) / 16.0f;
+        float v = (float)(index / 16) / 16.0f;
+        vertices.insert(vertices.end(), {
+         offset + (-0.5f * size), 0.5f * size,
+         offset + (-0.5f * size), -0.5f * size,
+         offset + (0.5f * size), 0.5f * size,
+         offset + (0.5f * size), -0.5f * size,
+         offset + (0.5f * size), 0.5f * size,
+         offset + (-0.5f * size), -0.5f * size,
+            });
+        texCoords.insert(texCoords.end(), {
+        u, v,
+        u, v + height,
+        u + width, v,
+        u + width, v + height,
+        u + width, v,
+        u, v + height,
+            });
+
+    } // end of for loop
+
+    glm::mat4 modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, position);
+    program->SetModelMatrix(modelMatrix);
+
+    glUseProgram(program->programID);
+
+    glVertexAttribPointer(program->positionAttribute, 2, GL_FLOAT, false, 0, vertices.data());
+    glEnableVertexAttribArray(program->positionAttribute);
+
+    glVertexAttribPointer(program->texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords.data());
+    glEnableVertexAttribArray(program->texCoordAttribute);
+
+    glBindTexture(GL_TEXTURE_2D, fontTextureID);
+    glDrawArrays(GL_TRIANGLES, 0, (int)(text.size() * 6));
+
+    glDisableVertexAttribArray(program->positionAttribute);
+    glDisableVertexAttribArray(program->texCoordAttribute);
 }
 
 
@@ -85,7 +145,8 @@ void Initialize() {
     state.player = new Entity();
     state.player->position = glm::vec3(0);
     state.player->movement = glm::vec3(0);
-    state.player->speed = 1.0f;
+    state.player->acceleration = glm::vec3(0, -9.81f, 0);
+    state.player->speed = 1.5f;
     state.player->textureID = LoadTexture("george_0.png");
 
     state.player->animRight = new int[4]{ 3, 7, 11, 15 };
@@ -100,7 +161,28 @@ void Initialize() {
     state.player->animCols = 4;
     state.player->animRows = 4;
 
+    state.player->height = 0.8;
+    state.player->width = 0.4;
 
+    state.player->jumpPower = 5.0f;
+
+    state.platforms = new Entity[PLATFORM_COUNT];
+    GLuint platformTextureID = LoadTexture("platformPack_tile001.png");
+    state.platforms[0].textureID = platformTextureID;
+    state.platforms[0].position = glm::vec3(-1, -3.25, 0);
+    state.platforms[1].textureID = platformTextureID;
+    state.platforms[1].position = glm::vec3(0, -3.25, 0);
+    //state.platforms[1].isActive = false;
+    state.platforms[2].textureID = platformTextureID;
+    state.platforms[2].position = glm::vec3(1, -3.25, 0);
+    state.platforms[3].textureID = platformTextureID;
+    state.platforms[3].position = glm::vec3(-3, -3.25, 0);
+    state.platforms[4].textureID = platformTextureID;
+    state.platforms[4].position = glm::vec3(1.5, -2.25, 0);
+
+    for (int i = 0; i < PLATFORM_COUNT; i++) {
+        state.platforms[i].Update(0, NULL, 0);
+    }
 }
 
 void ProcessInput() {
@@ -127,6 +209,9 @@ void ProcessInput() {
 
             case SDLK_SPACE:
                 // Some sort of action
+                if (state.player->collidedBottom) {
+                    state.player->jump = true;
+                }
                 break;
             }
             break; // SDL_KEYDOWN
@@ -151,25 +236,41 @@ void ProcessInput() {
 
 }
 
-float lastTicks = 0.0f;
-
+#define FIXED_TIMESTEP 0.0166666f
+float lastTicks = 0;
+float accumulator = 0.0f;
 void Update() {
     float ticks = (float)SDL_GetTicks() / 1000.0f;
     float deltaTime = ticks - lastTicks;
     lastTicks = ticks;
 
+    deltaTime += accumulator;
+    if (deltaTime < FIXED_TIMESTEP) {
+        accumulator = deltaTime;
+        return;
+    }
 
+    while (deltaTime >= FIXED_TIMESTEP) {
+        // Update. Notice it's FIXED_TIMESTEP. Not deltaTime
+        state.player->Update(FIXED_TIMESTEP, state.platforms, PLATFORM_COUNT);
 
-    state.player->Update(deltaTime);
+        deltaTime -= FIXED_TIMESTEP;
+    }
+
+    accumulator = deltaTime;
 }
-
 
 void Render() {
     glClear(GL_COLOR_BUFFER_BIT);
 
-
+    for (int i = 0; i < PLATFORM_COUNT; i++) {
+        state.platforms[i].Render(&program);
+    }
 
     state.player->Render(&program);
+
+    GLuint fontTextureID = LoadTexture("font1.png");
+    DrawText(&program, fontTextureID, "Hello", 1, -0.5f, glm::vec3(-4.25, 3, 0));
 
     SDL_GL_SwapWindow(displayWindow);
 }

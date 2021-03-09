@@ -1,1 +1,5 @@
-﻿  SDLProject.vcxproj -> C:\Users\immic\Desktop\Github\CSUY3113\Proj3\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe
+﻿  main.cpp
+C:\Users\immic\Desktop\Github\CSUY3113\Proj3\VisualStudioSDLProject\SDLProject\main.cpp(68,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\immic\Desktop\Github\CSUY3113\Proj3\VisualStudioSDLProject\SDLProject\main.cpp(164,31): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\immic\Desktop\Github\CSUY3113\Proj3\VisualStudioSDLProject\SDLProject\main.cpp(165,30): warning C4305: '=': truncation from 'double' to 'float'
+  SDLProject.vcxproj -> C:\Users\immic\Desktop\Github\CSUY3113\Proj3\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe

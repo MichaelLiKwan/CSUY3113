@@ -37,13 +37,16 @@
     <Image Include="ctg.png">
       <Filter>Source Files</Filter>
     </Image>
-    <Image Include="knight.png">
-      <Filter>Source Files</Filter>
-    </Image>
-    <Image Include="sun.png">
-      <Filter>Source Files</Filter>
-    </Image>
     <Image Include="george_0.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="spaceship.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="platformPack_tile001.png">
+      <Filter>Source Files</Filter>
+    </Image>
+    <Image Include="font1.png">
       <Filter>Source Files</Filter>
     </Image>
   </ItemGroup>
