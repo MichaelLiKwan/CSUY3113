@@ -16,13 +16,16 @@
 
 #include "Entity.h"
 
-#define PLATFORM_COUNT 5
+#define PLATFORM_COUNT 3
+
+#define WALL_COUNT 31
 
 #include <vector>
 
 struct GameState {
     Entity* player;
     Entity* platforms;
+    Entity* walls;
 };
 
 GameState state;
@@ -34,6 +37,8 @@ ShaderProgram program;
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
 
 GLuint fontTextureID;
+
+bool gameOver = false;
 
 GLuint LoadTexture(const char* filePath) {
     int w, h, n;
@@ -112,7 +117,7 @@ void DrawText(ShaderProgram* program, GLuint fontTextureID, std::string text,
 
 void Initialize() {
     SDL_Init(SDL_INIT_VIDEO);
-    displayWindow = SDL_CreateWindow("Textured!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
+    displayWindow = SDL_CreateWindow("Lunar Lander", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
     SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
     SDL_GL_MakeCurrent(displayWindow, context);
 
@@ -143,13 +148,15 @@ void Initialize() {
 
     // Initialize Player
     state.player = new Entity();
-    state.player->position = glm::vec3(0);
+    state.player->position = glm::vec3(-2.0f, 3.5f, 0);
     state.player->movement = glm::vec3(0);
-    state.player->acceleration = glm::vec3(0, -9.81f, 0);
+    state.player->gravity = glm::vec3(0, -0.05f, 0);
+    state.player->leftDeceleration = glm::vec3(0.1f, 0, 0);
+    state.player->rightDeceleration = glm::vec3(-0.1, 0, 0);
     state.player->speed = 1.5f;
-    state.player->textureID = LoadTexture("george_0.png");
+    state.player->textureID = LoadTexture("spaceship.png");
 
-    state.player->animRight = new int[4]{ 3, 7, 11, 15 };
+    /*state.player->animRight = new int[4]{ 3, 7, 11, 15 };
     state.player->animLeft = new int[4]{ 1, 5, 9, 13 };
     state.player->animUp = new int[4]{ 2, 6, 10, 14 };
     state.player->animDown = new int[4]{ 0, 4, 8, 12 };
@@ -159,29 +166,98 @@ void Initialize() {
     state.player->animIndex = 0;
     state.player->animTime = 0;
     state.player->animCols = 4;
-    state.player->animRows = 4;
+    state.player->animRows = 4;*/
 
-    state.player->height = 0.8;
+    state.player->height = 0.75;
     state.player->width = 0.4;
 
-    state.player->jumpPower = 5.0f;
+    state.player->jumpPower = 0.3f;
+    state.player->leftPower = -0.3f;
+    state.player->rightPower = 0.3f;
 
     state.platforms = new Entity[PLATFORM_COUNT];
     GLuint platformTextureID = LoadTexture("platformPack_tile001.png");
     state.platforms[0].textureID = platformTextureID;
-    state.platforms[0].position = glm::vec3(-1, -3.25, 0);
+    state.platforms[0].position = glm::vec3(-3.5, -3.25, 0);
     state.platforms[1].textureID = platformTextureID;
-    state.platforms[1].position = glm::vec3(0, -3.25, 0);
-    //state.platforms[1].isActive = false;
+    state.platforms[1].position = glm::vec3(-2.5, -3.25, 0);
     state.platforms[2].textureID = platformTextureID;
-    state.platforms[2].position = glm::vec3(1, -3.25, 0);
-    state.platforms[3].textureID = platformTextureID;
-    state.platforms[3].position = glm::vec3(-3, -3.25, 0);
-    state.platforms[4].textureID = platformTextureID;
-    state.platforms[4].position = glm::vec3(1.5, -2.25, 0);
+    state.platforms[2].position = glm::vec3(-1.5, -3.25, 0);
+
+    state.walls = new Entity[WALL_COUNT];
+    GLuint wallTextureID = LoadTexture("platformPack_tile004.png");
+    state.walls[0].textureID = wallTextureID;
+    state.walls[0].position = glm::vec3(-4.5, -3.25, 0);
+    state.walls[1].textureID = wallTextureID;
+    state.walls[1].position = glm::vec3(-0.5, -3.25, 0);
+    state.walls[2].textureID = wallTextureID;
+    state.walls[2].position = glm::vec3(0.5, -3.25, 0);
+    state.walls[3].textureID = wallTextureID;
+    state.walls[3].position = glm::vec3(1.5, -3.25, 0);
+    state.walls[4].textureID = wallTextureID;
+    state.walls[4].position = glm::vec3(2.5, -3.25, 0);
+    state.walls[5].textureID = wallTextureID;
+    state.walls[5].position = glm::vec3(3.5, -3.25, 0);
+    state.walls[6].textureID = wallTextureID;
+    state.walls[6].position = glm::vec3(4.5, -3.25, 0);
+    state.walls[7].textureID = wallTextureID;
+    state.walls[7].position = glm::vec3(4.5, -2.25, 0);
+    state.walls[8].textureID = wallTextureID;
+    state.walls[8].position = glm::vec3(4.5, -1.25, 0);
+    state.walls[9].textureID = wallTextureID;
+    state.walls[9].position = glm::vec3(4.5, -0.25, 0);
+    state.walls[10].textureID = wallTextureID;
+    state.walls[10].position = glm::vec3(4.5, 0.75, 0);
+    state.walls[11].textureID = wallTextureID;
+    state.walls[11].position = glm::vec3(4.5, 1.75, 0);
+    state.walls[12].textureID = wallTextureID;
+    state.walls[12].position = glm::vec3(4.5, 2.75, 0);
+    state.walls[13].textureID = wallTextureID;
+    state.walls[13].position = glm::vec3(4.5, 3.75, 0);
+    state.walls[14].textureID = wallTextureID;
+    state.walls[14].position = glm::vec3(-4.5, -2.25, 0);
+    state.walls[15].textureID = wallTextureID;
+    state.walls[15].position = glm::vec3(-4.5, -1.25, 0);
+    state.walls[16].textureID = wallTextureID;
+    state.walls[16].position = glm::vec3(-4.5, -0.25, 0);
+    state.walls[17].textureID = wallTextureID;
+    state.walls[17].position = glm::vec3(-4.5, 0.75, 0);
+    state.walls[18].textureID = wallTextureID;
+    state.walls[18].position = glm::vec3(-4.5, 1.75, 0);
+    state.walls[19].textureID = wallTextureID;
+    state.walls[19].position = glm::vec3(-4.5, 2.75, 0);
+    state.walls[20].textureID = wallTextureID;
+    state.walls[20].position = glm::vec3(-4.5, 3.75, 0);
+
+    state.walls[21].textureID = wallTextureID;
+    state.walls[21].position = glm::vec3(-3.5, 0.75, 0);
+    state.walls[22].textureID = wallTextureID;
+    state.walls[22].position = glm::vec3(-2.5, 0.75, 0);
+    state.walls[23].textureID = wallTextureID;
+    state.walls[23].position = glm::vec3(-1.5, 0.75, 0);
+    state.walls[24].textureID = wallTextureID;
+    state.walls[24].position = glm::vec3(-0.5, 0.75, 0);
+    state.walls[25].textureID = wallTextureID;
+    state.walls[25].position = glm::vec3(0.5, 0.75, 0);
+
+    state.walls[26].textureID = wallTextureID;
+    state.walls[26].position = glm::vec3(3.5, -2.25, 0);
+    state.walls[27].textureID = wallTextureID;
+    state.walls[27].position = glm::vec3(2.5, -2.25, 0);
+    state.walls[28].textureID = wallTextureID;
+    state.walls[28].position = glm::vec3(1.5, -2.25, 0);
+    state.walls[29].textureID = wallTextureID;
+    state.walls[29].position = glm::vec3(0.5, -2.25, 0);
+    state.walls[30].textureID = wallTextureID;
+    state.walls[30].position = glm::vec3(-0.5, -2.25, 0);
+
 
     for (int i = 0; i < PLATFORM_COUNT; i++) {
-        state.platforms[i].Update(0, NULL, 0);
+        state.platforms[i].UpdatePlatform(0, NULL, 0);
+    }
+
+    for (int i = 0; i < WALL_COUNT; i++) {
+        state.walls[i].UpdateWall(0, NULL, 0);
     }
 }
 
@@ -201,17 +277,18 @@ void ProcessInput() {
             switch (event.key.keysym.sym) {
             case SDLK_LEFT:
                 // Move the player left
+                state.player->goLeft = true;
                 break;
 
             case SDLK_RIGHT:
                 // Move the player right
+                state.player->goRight = true;
                 break;
 
             case SDLK_SPACE:
                 // Some sort of action
-                if (state.player->collidedBottom) {
-                    state.player->jump = true;
-                }
+                //if (state.player->collidedBottom) {}
+                state.player->jump = true;
                 break;
             }
             break; // SDL_KEYDOWN
@@ -220,14 +297,14 @@ void ProcessInput() {
 
     const Uint8* keys = SDL_GetKeyboardState(NULL);
 
-    if (keys[SDL_SCANCODE_LEFT]) {
-        state.player->movement.x = -1.0f;
-        state.player->animIndices = state.player->animLeft;
-    }
-    else if (keys[SDL_SCANCODE_RIGHT]) {
-        state.player->movement.x = 1.0f;
-        state.player->animIndices = state.player->animRight;
-    }
+    //if (keys[SDL_SCANCODE_LEFT]) {
+    //    state.player->movement.x = -3.0f;
+    //    //state.player->animIndices = state.player->animLeft;
+    //}
+    //else if (keys[SDL_SCANCODE_RIGHT]) {
+    //    state.player->movement.x = 3.0f;
+    //    //state.player->animIndices = state.player->animRight;
+    //}
 
 
     if (glm::length(state.player->movement) > 1.0f) {
@@ -240,6 +317,11 @@ void ProcessInput() {
 float lastTicks = 0;
 float accumulator = 0.0f;
 void Update() {
+
+    if (gameOver) {
+        return;
+    }
+
     float ticks = (float)SDL_GetTicks() / 1000.0f;
     float deltaTime = ticks - lastTicks;
     lastTicks = ticks;
@@ -252,8 +334,8 @@ void Update() {
 
     while (deltaTime >= FIXED_TIMESTEP) {
         // Update. Notice it's FIXED_TIMESTEP. Not deltaTime
-        state.player->Update(FIXED_TIMESTEP, state.platforms, PLATFORM_COUNT);
-
+        state.player->UpdatePlatform(FIXED_TIMESTEP, state.platforms, PLATFORM_COUNT);
+        state.player->UpdateWall(FIXED_TIMESTEP, state.walls, WALL_COUNT);
         deltaTime -= FIXED_TIMESTEP;
     }
 
@@ -267,10 +349,22 @@ void Render() {
         state.platforms[i].Render(&program);
     }
 
+    for (int i = 0; i < WALL_COUNT; i++) {
+        state.walls[i].Render(&program);
+    }
+
     state.player->Render(&program);
 
     GLuint fontTextureID = LoadTexture("font1.png");
-    DrawText(&program, fontTextureID, "Hello", 1, -0.5f, glm::vec3(-4.25, 3, 0));
+
+    if (state.player->success) {
+        DrawText(&program, fontTextureID, "Mission Successful", 1, -0.5f, glm::vec3(-4.25, 3, 0));
+        gameOver = true;
+    }
+    else if (state.player->fail) {
+        DrawText(&program, fontTextureID, "Mission Failed", 1, -0.5f, glm::vec3(-4.25, 3, 0));
+        gameOver = true; 
+    }
 
     SDL_GL_SwapWindow(displayWindow);
 }

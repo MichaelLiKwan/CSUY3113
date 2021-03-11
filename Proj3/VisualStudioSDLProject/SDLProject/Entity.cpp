@@ -4,7 +4,9 @@ Entity::Entity()
 {
     position = glm::vec3(0);
     movement = glm::vec3(0);
-    acceleration = glm::vec3(0);
+    gravity = glm::vec3(0);
+    leftDeceleration = glm::vec3(0);
+    rightDeceleration = glm::vec3(0);
     velocity = glm::vec3(0);
     speed = 0;
 
@@ -71,7 +73,7 @@ void Entity::CheckCollisionsX(Entity* objects, int objectCount)
     }
 }
 
-void Entity::Update(float deltaTime, Entity* platforms, int platformCount)
+void Entity::UpdatePlatform(float deltaTime, Entity* platforms, int platformCount)
 {
     if (isActive == false) return;
 
@@ -105,14 +107,118 @@ void Entity::Update(float deltaTime, Entity* platforms, int platformCount)
         velocity.y += jumpPower;
     }
 
-    velocity.x = movement.x * speed;
-    velocity += acceleration * deltaTime;
+    if (goLeft) {
+        goLeft = false;
+        velocity.x += leftPower;
+    }
+
+    if (goRight) {
+        goRight = false;
+        velocity.x += rightPower;
+    }
+
+    //velocity.x = movement.x * speed;
+    velocity += gravity * deltaTime;
+    if (velocity.x > 0) {
+        velocity += rightDeceleration * deltaTime;
+        if (velocity.x < 0){
+            velocity.x = 0;
+        }
+    }
+
+    if (velocity.x < 0) {
+        velocity += leftDeceleration * deltaTime;
+        if (velocity.x > 0) {
+            velocity.x = 0;
+        }
+    }
 
     position.y += velocity.y * deltaTime; // Move on Y
     CheckCollisionsY(platforms, platformCount);// Fix if needed
 
     position.x += velocity.x * deltaTime; // Move on X
     CheckCollisionsX(platforms, platformCount);// Fix if needed
+
+    if (collidedBottom) {
+        success = true;
+    }
+
+    if (collidedTop || collidedLeft || collidedRight) {
+        fail = true;
+    }
+
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, position);
+}
+
+void Entity::UpdateWall(float deltaTime, Entity* walls, int wallCount)
+{
+    if (isActive == false) return;
+
+    collidedTop = false;
+    collidedBottom = false;
+    collidedLeft = false;
+    collidedRight = false;
+
+    if (animIndices != NULL) {
+        if (glm::length(movement) != 0) {
+            animTime += deltaTime;
+
+            if (animTime >= 0.25f)
+            {
+                animTime = 0.0f;
+                animIndex++;
+                if (animIndex >= animFrames)
+                {
+                    animIndex = 0;
+                }
+            }
+        }
+        else {
+            animIndex = 0;
+        }
+    }
+
+    if (jump) {
+        jump = false;
+        velocity.y += jumpPower;
+    }
+
+    if (goLeft) {
+        goLeft = false;
+        velocity.x += leftPower;
+    }
+
+    if (goRight) {
+        goRight = false;
+        velocity.x += rightPower;
+    }
+
+    //velocity.x = movement.x * speed;
+    velocity += gravity * deltaTime;
+    if (velocity.x > 0) {
+        velocity += rightDeceleration * deltaTime;
+        if (velocity.x < 0) {
+            velocity.x = 0;
+        }
+    }
+
+    if (velocity.x < 0) {
+        velocity += leftDeceleration * deltaTime;
+        if (velocity.x > 0) {
+            velocity.x = 0;
+        }
+    }
+
+    position.y += velocity.y * deltaTime; // Move on Y
+    CheckCollisionsY(walls, wallCount);// Fix if needed
+
+    position.x += velocity.x * deltaTime; // Move on X
+    CheckCollisionsX(walls, wallCount);// Fix if needed
+
+    if (collidedBottom || collidedLeft || collidedRight || collidedTop) {
+        fail = true;
+    }
 
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, position);

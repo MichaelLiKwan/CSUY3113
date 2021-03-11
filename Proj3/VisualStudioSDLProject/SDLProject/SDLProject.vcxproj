@@ -140,6 +140,7 @@
     <Image Include="font1.png" />
     <Image Include="george_0.png" />
     <Image Include="platformPack_tile001.png" />
+    <Image Include="platformPack_tile004.png" />
     <Image Include="spaceship.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

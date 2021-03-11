@@ -49,5 +49,8 @@
     <Image Include="font1.png">
       <Filter>Source Files</Filter>
     </Image>
+    <Image Include="platformPack_tile004.png">
+      <Filter>Source Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

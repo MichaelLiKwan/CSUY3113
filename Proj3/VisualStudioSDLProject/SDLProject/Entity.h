@@ -15,7 +15,9 @@ class Entity {
 public:
     glm::vec3 position;
     glm::vec3 movement;
-    glm::vec3 acceleration;
+    glm::vec3 gravity;
+    glm::vec3 leftDeceleration;
+    glm::vec3 rightDeceleration;
     glm::vec3 velocity;
 
     float width = 1;
@@ -23,6 +25,12 @@ public:
 
     bool jump = false;
     float jumpPower = 0;
+
+    bool goLeft = false;
+    float leftPower = 0;
+
+    bool goRight = false;
+    float rightPower = 0;
 
     float speed;
 
@@ -49,13 +57,16 @@ public:
     bool collidedLeft = false;
     bool collidedRight = false;
 
+    bool success = false;
+    bool fail = false;
 
     Entity();
 
     bool CheckCollision(Entity* other);
     void CheckCollisionsY(Entity* objects, int objectCount);
     void CheckCollisionsX(Entity* objects, int objectCount);
-    void Update(float deltaTime, Entity* platforms, int platformCount);
+    void UpdatePlatform(float deltaTime, Entity* platforms, int platformCount);
+    void UpdateWall(float deltaTime, Entity* walls, int wallCount);
     void Render(ShaderProgram* program);
     void DrawSpriteFromTextureAtlas(ShaderProgram* program, GLuint textureID, int index);
 };
