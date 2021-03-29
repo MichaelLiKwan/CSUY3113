@@ -145,6 +145,8 @@ void Initialize() {
 
     // Initialize Game Objects
 
+    //GLuint fontTextureID = LoadTexture("font1.png");
+
     // Initialize Player
     state.player = new Entity();
     state.player->entityType = PLAYER;
@@ -187,7 +189,7 @@ void Initialize() {
     }
 
     for (int i = 0; i < PLATFORM_COUNT; i++) {
-        state.platforms[i].Update(0, NULL, NULL, 0);
+        state.platforms[i].Update(0, NULL, NULL, 0, NULL, 0);
     }
 
     state.enemies = new Entity[ENEMY_COUNT];
@@ -283,7 +285,7 @@ void Update() {
     }
 
     float ticks = (float)SDL_GetTicks() / 1000.0f;
-    float deltaTime = ticks - lastTicks;
+    float deltaTime = ticks - lastTicks;  
     lastTicks = ticks;
 
     deltaTime += accumulator;
@@ -294,10 +296,10 @@ void Update() {
 
     while (deltaTime >= FIXED_TIMESTEP) {
         // Update. Notice it's FIXED_TIMESTEP. Not deltaTime
-        state.player->Update(FIXED_TIMESTEP, state.player, state.platforms, PLATFORM_COUNT);
+        state.player->Update(FIXED_TIMESTEP, state.player, state.platforms, PLATFORM_COUNT, state.enemies, ENEMY_COUNT);
 
         for (int i = 0; i < ENEMY_COUNT; i++) {
-            state.enemies[i].Update(FIXED_TIMESTEP, state.player, state.platforms, PLATFORM_COUNT);
+            state.enemies[i].Update(FIXED_TIMESTEP, state.player, state.platforms, PLATFORM_COUNT, NULL, 0);
         }
 
         deltaTime -= FIXED_TIMESTEP;
@@ -319,14 +321,14 @@ void Render() {
 
     state.player->Render(&program);
 
-    GLuint fontTextureID = LoadTexture("font1.png");
-
     state.player->success = true;
     for (int i = 0; i < ENEMY_COUNT; i++) {
         if (state.enemies[i].isActive) {
             state.player->success = false;
         }
     }
+
+    GLuint fontTextureID = LoadTexture("font1.png");
 
     if (state.player->success) {
         DrawText(&program, fontTextureID, "Mission Successful", 1, -0.5f, glm::vec3(-4.25, 3, 0));

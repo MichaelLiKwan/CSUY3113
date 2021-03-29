@@ -35,15 +35,18 @@ void Entity::CheckCollisionsY(Entity* objects, int objectCount)
         {
             float ydist = fabs(position.y - object->position.y);
             float penetrationY = fabs(ydist - (height / 2.0f) - (object->height / 2.0f));
-            if (velocity.y > 0 || object[i].velocity.y < 0) {
+            if (velocity.y > 0) {
                 position.y -= penetrationY;
                 velocity.y = 0;
                 collidedTop = true;
             }
-            else if (velocity.y < 0 || object[i].velocity.y > 0) {
+            else if (velocity.y < 0) {
                 position.y += penetrationY;
                 velocity.y = 0;
                 collidedBottom = true;
+                if (object->entityType == ENEMY) {
+                    object->isActive = false;
+                }
             }
         }
     }
@@ -59,12 +62,12 @@ void Entity::CheckCollisionsX(Entity* objects, int objectCount)
         {
             float xdist = fabs(position.x - object->position.x);
             float penetrationX = fabs(xdist - (width / 2.0f) - (object->width / 2.0f));
-            if (velocity.x > 0 || object[i].velocity.x < 0) {
+            if (velocity.x > 0) {
                 position.x -= penetrationX;
                 velocity.x = 0;
                 collidedRight = true;
             }
-            else if (velocity.x < 0 || object[i].velocity.x > 0) {
+            else if (velocity.x < 0) {
                 position.x += penetrationX;
                 velocity.x = 0;
                 collidedLeft = true;
@@ -146,24 +149,23 @@ void Entity::AI(Entity* player) {
     }
 }
 
-void Entity::Update(float deltaTime, Entity* player, Entity* platforms, int platformCount)
+void Entity::Update(float deltaTime, Entity* player, Entity* platforms, int platformCount, Entity* enemies, int enemyCount)
 {
     if (isActive == false) return;
 
     if (entityType == ENEMY) {
         AI(player);
-
+    }
+    else if (entityType == PLAYER) {
         collidedTop = false;
         collidedBottom = false;
         collidedLeft = false;
         collidedRight = false;
 
-        CheckCollisionsY(player, 1);// Fix if needed
-        CheckCollisionsX(player, 1);// Fix if needed
-        if (collidedTop) {
-            isActive = false;
-        }
-        else if (collidedBottom || collidedLeft || collidedRight) {
+        CheckCollisionsY(enemies, enemyCount);// Fix if needed
+        CheckCollisionsX(enemies, enemyCount);// Fix if needed
+
+        if (collidedTop || collidedLeft || collidedRight) {
             player->fail = true;
         }
     }
