@@ -16,7 +16,7 @@
 
 #include "Entity.h"
 
-#define PLATFORM_COUNT 14
+#define PLATFORM_COUNT 18
 #define ENEMY_COUNT 3
 
 #include <vector>
@@ -145,7 +145,7 @@ void Initialize() {
 
     // Initialize Game Objects
 
-    //GLuint fontTextureID = LoadTexture("font1.png");
+    fontTextureID = LoadTexture("font1.png");
 
     // Initialize Player
     state.player = new Entity();
@@ -171,7 +171,7 @@ void Initialize() {
     state.player->height = 0.75;
     state.player->width = 0.4;
 
-    state.player->jumpPower = 8.0f;
+    state.player->jumpPower = 7.0f;
 
     state.platforms = new Entity[PLATFORM_COUNT];
     GLuint platformTextureID = LoadTexture("platformPack_tile004.png");
@@ -188,6 +188,12 @@ void Initialize() {
         state.platforms[i].position = glm::vec3(-12 + i, -1.25, 0);
     }
 
+    for (int i = 14; i < 18; i++) {
+        state.platforms[i].entityType = PLATFORM;
+        state.platforms[i].textureID = platformTextureID;
+        state.platforms[i].position = glm::vec3( -14 + i, .75, 0);
+    }
+
     for (int i = 0; i < PLATFORM_COUNT; i++) {
         state.platforms[i].Update(0, NULL, NULL, 0, NULL, 0);
     }
@@ -197,7 +203,7 @@ void Initialize() {
 
     state.enemies[0].entityType = ENEMY;
     state.enemies[0].textureID = enemy1TextureID;
-    state.enemies[0].position = glm::vec3(1.0, -2.0, 0);
+    state.enemies[0].position = glm::vec3(3.0, .75, 0);
     state.enemies[0].gravity = glm::vec3(0, -9.81f, 0);
     state.enemies[0].aiType = WAITANDGO;
     state.enemies[0].aiState = IDLE;
@@ -221,7 +227,7 @@ void Initialize() {
     state.enemies[2].gravity = glm::vec3(0, -9.81f, 0);
     state.enemies[2].aiType = JUMPER;
     state.enemies[2].aiState = IDLE;
-    state.enemies[2].jumpPower = 3.0f;
+    state.enemies[2].jumpPower = 5.0f;
 
 }
 
@@ -328,14 +334,17 @@ void Render() {
         }
     }
 
-    GLuint fontTextureID = LoadTexture("font1.png");
+    if (state.player->position.y < -8) {
+        DrawText(&program, fontTextureID, "You Lose", 1, -0.5f, glm::vec3(-4.25, 3, 0));
+        gameOver = true;
+    }
 
     if (state.player->success) {
-        DrawText(&program, fontTextureID, "Mission Successful", 1, -0.5f, glm::vec3(-4.25, 3, 0));
+        DrawText(&program, fontTextureID, "You Win", 1, -0.5f, glm::vec3(-4.25, 3, 0));
         gameOver = true;
     }
     else if (state.player->fail) {
-        DrawText(&program, fontTextureID, "Mission Failed", 1, -0.5f, glm::vec3(-4.25, 3, 0));
+        DrawText(&program, fontTextureID, "You Lose", 1, -0.5f, glm::vec3(-4.25, 3, 0));
         gameOver = true; 
     }
 
