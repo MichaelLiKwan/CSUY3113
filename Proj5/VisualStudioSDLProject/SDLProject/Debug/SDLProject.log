@@ -1,2 +1,3 @@
-﻿  main.cpp
+﻿  Level1.cpp
+C:\Users\immic\Desktop\Github\CSUY3113\Proj5\VisualStudioSDLProject\SDLProject\Level1.cpp(49,30): warning C4305: '=': truncation from 'double' to 'float'
   SDLProject.vcxproj -> C:\Users\immic\Desktop\Github\CSUY3113\Proj5\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe
