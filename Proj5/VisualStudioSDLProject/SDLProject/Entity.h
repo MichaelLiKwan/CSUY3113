@@ -65,6 +65,9 @@ public:
     bool success = false;
     bool fail = false;
 
+    int lives = 3;
+    bool dead = false;
+
     Entity();
 
     bool CheckCollision(Entity* other);

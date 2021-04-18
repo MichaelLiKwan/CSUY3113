@@ -1,3 +1,5 @@
-﻿  Level1.cpp
-C:\Users\immic\Desktop\Github\CSUY3113\Proj5\VisualStudioSDLProject\SDLProject\Level1.cpp(49,30): warning C4305: '=': truncation from 'double' to 'float'
+﻿  Level2.cpp
+C:\Users\immic\Desktop\Github\CSUY3113\Proj5\VisualStudioSDLProject\SDLProject\Level2.cpp(50,30): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\immic\Desktop\Github\CSUY3113\Proj5\VisualStudioSDLProject\SDLProject\Level2.cpp(65,33): warning C4305: '=': truncation from 'double' to 'float'
+C:\Users\immic\Desktop\Github\CSUY3113\Proj5\VisualStudioSDLProject\SDLProject\Level2.cpp(74,33): warning C4305: '=': truncation from 'double' to 'float'
   SDLProject.vcxproj -> C:\Users\immic\Desktop\Github\CSUY3113\Proj5\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe

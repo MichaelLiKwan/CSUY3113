@@ -1,7 +1,4 @@
-﻿  Entity.cpp
-  main.cpp
+﻿  main.cpp
 C:\Users\immic\Desktop\Github\CSUY3113\Proj4\VisualStudioSDLProject\SDLProject\main.cpp(72,23): warning C4018: '<': signed/unsigned mismatch
 C:\Users\immic\Desktop\Github\CSUY3113\Proj4\VisualStudioSDLProject\SDLProject\main.cpp(172,30): warning C4305: '=': truncation from 'double' to 'float'
-  ShaderProgram.cpp
-  Generating Code...
   SDLProject.vcxproj -> C:\Users\immic\Desktop\Github\CSUY3113\Proj4\VisualStudioSDLProject\SDLProject\Debug\SDLProject.exe

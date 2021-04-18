@@ -161,6 +161,12 @@
     <Image Include="zombie2.png" />
     <Image Include="zombie3.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="bounce.wav" />
+    <Media Include="bumbaCrossing.mp3" />
+    <Media Include="dooblydoo.mp3" />
+    <Media Include="jump.wav" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

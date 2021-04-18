@@ -39,14 +39,13 @@ void Entity::CheckCollisionsY(Entity* objects, int objectCount)
                 position.y -= penetrationY;
                 velocity.y = 0;
                 collidedTop = true;
+                dead = true;
             }
             else if (velocity.y < 0) {
                 position.y += penetrationY;
                 velocity.y = 0;
                 collidedBottom = true;
-                if (object->entityType == ENEMY) {
-                    object->isActive = false;
-                }
+                object->isActive = false;
             }
         }
     }
@@ -111,11 +110,13 @@ void Entity::CheckCollisionsX(Entity* objects, int objectCount)
                 position.x -= penetrationX;
                 velocity.x = 0;
                 collidedRight = true;
+                dead = true;
             }
             else if (velocity.x < 0) {
                 position.x += penetrationX;
                 velocity.x = 0;
                 collidedLeft = true;
+                dead = true;
             }
         }
     }
